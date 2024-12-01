@@ -19,8 +19,8 @@ for i in {1..25}; do
 		# Copy template.py to new main.py file in directory
 		cat template.py >> "$directory_name/main.py"
 
-		# Create empty input.txt in directory
-		touch "$directory_name/input.txt"
+		# Create empty input.in in directory
+		touch "$directory_name/input.in"
 
 		echo "${GREEN}Created $directory_name directory!${OFF}"
 	else
