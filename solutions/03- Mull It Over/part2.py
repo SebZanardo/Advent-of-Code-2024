@@ -5,34 +5,28 @@ import re
 # Try to read a path to an input file from command line arguments
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
 
-pattern_remove = r'(don\'t\(\)(.*?)do\(\))'
-pattern_remove_end = r'don\'t\(\).*'
-pattern = r'mul\(([0-9]+),([0-9]+)\)'
-
-long_line = ''
+# Parse input file into a single string removing newline characters
+corrupted_memory = ""
 with open(path, "r") as f:
     for line in f.readlines():
-        long_line += line.strip()
+        corrupted_memory += line.strip()
 
-# Enable disable
-snippet = re.search(pattern_remove, long_line)
-while snippet:
-    long_line = long_line[:snippet.start()] + long_line[snippet.end():]
-    snippet = re.search(pattern_remove, long_line)
+# Enable disable, remove sections between don't() and do() commands
+pattern_remove = r'(don\'t\(\)(.*?)do\(\))'
+corrupted_memory = re.sub(pattern_remove, "", corrupted_memory)
 
-# Remove trail
-trailing = re.search(pattern_remove_end, long_line)
-if trailing:
-    long_line = long_line[:trailing.start()] + long_line[trailing.end():]
+# Remove trail, if there is a don't at the end stop reading rest of operations
+pattern_remove_end = r'don\'t\(\).*'
+corrupted_memory = re.sub(pattern_remove_end, "", corrupted_memory)
 
-# Find mul operations
-operations = []
-results = re.findall(pattern, long_line)
-for r in results:
-    operations.append(list(map(int, r)))
+# Regex pattern match all non-overlapping instances
+pattern_operation = r'mul\(([0-9]+),([0-9]+)\)'
+matches = re.findall(pattern_operation, corrupted_memory)
 
+# Calculate total of all multiply instructions
 total = 0
-for multiply in operations:
-    total += multiply[0] * multiply[1]
+for r in matches:
+    mul_instruction = list(map(int, r))
+    total += mul_instruction[0] * mul_instruction[1]
 
 print(f"Solution:\n{total}")
