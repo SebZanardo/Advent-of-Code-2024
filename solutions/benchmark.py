@@ -7,6 +7,7 @@ import argparse
 RED = '\033[0;31m'
 YELLOW = '\033[0;33m'
 GREEN = '\033[0;32m'
+MAGENTA = '\033[0;35m'
 OFF = '\033[0m'
 
 PYTHON_FILE_EXTENSION = ".py"
@@ -45,7 +46,7 @@ def benchmark_script(
     repeat_times: int
 ) -> None:
     print(f"{'-' * 80}")
-    print(script_path)
+    print(f"{MAGENTA}{script_path}{OFF}")
 
     # Run benchmark repeat_times amount of times
     total_elapsed_time = 0
@@ -80,15 +81,19 @@ def benchmark(
     folder_path: str,
     repeat_times: int
 ) -> None:
+    # Change directory to solution path
+    os.chdir(folder_path)
+
+    print(f"\nBenchmarking solutions in '{folder_path}'")
+
     # Collect list of file types
-    for file_name in os.listdir(folder_path):
+    for file_name in os.listdir():
         extension = os.path.splitext(file_name)[1]
 
         if not extension or extension not in SCRIPT_FILE_EXTENSIONS:
             continue
 
-        script_path = os.path.join(folder_path, file_name)
-        benchmark_script(script_path, extension, repeat_times)
+        benchmark_script(file_name, extension, repeat_times)
 
 
 # For parsing arguments correctly and giving detailed help
