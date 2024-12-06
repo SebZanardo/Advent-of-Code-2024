@@ -2,11 +2,12 @@ import sys
 from collections import defaultdict
 
 
-def is_ordered(update: list[int], ordering_rules: dict[int, list]) -> bool:
+def is_ordered(update: list[int], ordering_rules: dict[int, set]) -> bool:
     for i, num in enumerate(update):
         # If there are no ordering rules for this number skip!
-        if num not in ordering_rules:
-            continue
+        # Never actually the case :((
+        # if num not in ordering_rules:
+        #     continue
 
         # Otherwise iterate over every number before in sequence
         # Return false if a previous page in sequence must be before current
@@ -18,7 +19,7 @@ def is_ordered(update: list[int], ordering_rules: dict[int, list]) -> bool:
     return True
 
 
-def order(update: list[int], ordering_rules: dict[int, list]) -> None:
+def order(update: list[int], ordering_rules: dict[int, set]) -> None:
     ordered = False
 
     # If not ordered have another attempt
@@ -27,12 +28,13 @@ def order(update: list[int], ordering_rules: dict[int, list]) -> None:
             num = update[i]
 
             # If there are no ordering rules for this number skip!
-            if num not in ordering_rules:
-                continue
+            # Never actually the case :((
+            # if num not in ordering_rules:
+            #     continue
 
             # Otherwise iterate over every number before in sequence
-            # If found number that current number is supposed to be before
-            #   and insert number before it
+            # If found previous number that current number is supposed to be
+            #   before remove current number and insert before previous
             for j in range(i):
                 previous_num = update[j]
                 if previous_num in ordering_rules[num]:
@@ -47,14 +49,15 @@ def order(update: list[int], ordering_rules: dict[int, list]) -> None:
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
 
 # Parse input file into a dictionary for rules and a 2D array for page updates
-ordering_rules = defaultdict(list)
+# Use a set for O(1) lookup
+ordering_rules = defaultdict(set)
 updates = []
 with open(path, "r") as f:
     rules, page_updates = f.read().split("\n\n")
 
     for rule in rules.split('\n'):
         x, y = map(int, rule.split('|'))
-        ordering_rules[x].append(y)
+        ordering_rules[x].add(y)
 
     for page_update in page_updates.strip().split('\n'):
         updates.append(list(map(int, page_update.split(','))))
