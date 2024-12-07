@@ -1,5 +1,4 @@
 import sys
-from collections import Counter
 
 
 def get_visited(
@@ -39,9 +38,9 @@ def is_loop(map: list[list[str]], start_x: int, start_y: int) -> bool:
     y = start_y
     dir = 0  # Up
 
-    # Count how many times positions are visited
-    visited = Counter()
-    visited[(x, y)] += 1
+    # Record x, y and direction in set
+    visited = set()
+    visited.add((x, y, dir))
 
     # Simulate
     while True:
@@ -59,11 +58,12 @@ def is_loop(map: list[list[str]], start_x: int, start_y: int) -> bool:
 
         x = new_x
         y = new_y
-        visited[(x, y)] += 1
 
-        # If we have visited the same position >4 times it is a loop
-        if visited[(x, y)] > 4:
+        # We have looped if in the same position facing the same direction
+        if (x, y, dir) in visited:
             return True
+
+        visited.add((x, y, dir))
 
     return False
 
