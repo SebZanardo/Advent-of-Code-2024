@@ -1,23 +1,36 @@
 import sys
-from itertools import product
+from queue import deque
 
 
 def possible(result: int, values: list[int]) -> bool:
-    combos = list(product([0, 1], repeat=len(values) - 1))
+    # Iterative backtracking algorithm
+    stack = deque()
+    stack.append((values[0], '+', 1))
+    stack.append((values[0], '*', 1))
 
-    for combo in combos:
-        total = values[0]
+    # While there are more combinations to test
+    while stack:
+        current_total, operation, i = stack.pop()
 
-        # Perform combo of operations
-        for i, operator in enumerate(combo):
-            val = values[i + 1]
-            if operator == 0:
-                total += val
-            elif operator == 1:
-                total *= val
+        # Perform operation
+        if operation == '+':
+            current_total += values[i]
 
-        # Check if operator combination gives correct result
-        if total == result:
+        elif operation == '*':
+            current_total *= values[i]
+
+        # If the answer is already too large, it cannot get smaller
+        # Note: There are no negative numbers in the input
+        if current_total > result:
+            continue
+
+        # If there are more values to compute
+        if i + 1 < len(values):
+            stack.append((current_total, '+', i + 1))
+            stack.append((current_total, '*', i + 1))
+
+        # If all values in total then compare to result
+        elif current_total == result:
             return True
 
     return False
@@ -33,6 +46,7 @@ with open(path, "r") as f:
         result, values = line.strip().split(':')
         equations.append((int(result), list(map(int, values.split()))))
 
+# Test all possible equation combinations and sum total if possible
 total_calibration_result = 0
 for equation in equations:
     result, values = equation
