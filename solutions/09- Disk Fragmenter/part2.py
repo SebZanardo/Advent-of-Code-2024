@@ -1,67 +1,63 @@
 import sys
 
-print("Sorry this solution is not optimal yet and may take a while to compute")
-
 
 # Try to read a path to an input file from command line arguments
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
 
-filesystem = []
+# Parse input into a hashmap for blocks, and a 2D list for free space
+# blocks -> {id : (index, size)}
+# free_space -> [(index, size), ...]
+blocks: dict[int: tuple[int, int]] = {}
+free_space: list[tuple[int, int]] = []
 with open(path, "r") as f:
     files = list(map(int, list(f.readline().strip())))
+    index = 0
     is_block = True
     for i in range(len(files)):
+        size = files[i]
+
         if is_block:
-            block_size = files[i]
-            filesystem += [i//2] * block_size
+            blocks[i//2] = (index, size)
             is_block = False
+
         else:
-            free_space = files[i]
-            filesystem += [-1] * free_space
+            if size != 0:
+                free_space.append((index, size))
             is_block = True
 
-right = len(filesystem) - 1
-while right >= 0:
-    # We have a block to possibly move
-    if filesystem[right] != -1:
-        # Evaluate size of block to move
-        move_block_size = 0
-        block_id = filesystem[right]
-        while filesystem[right] == block_id:
-            move_block_size += 1
-            right -= 1
+        index += size
 
-        # Find space for block to move to
-        found = False
-        temp_left = 0
-        temp_right = 0
-        while temp_left < right:
-            if filesystem[temp_left] == -1:
-                temp_right = temp_left
-                while temp_right < len(filesystem) and filesystem[temp_right] == -1 and (temp_right - temp_left) < move_block_size:
-                    temp_right += 1
+# Iterate over blocks backwards
+for id, (index, size) in reversed(blocks.items()):
+    # Find first free space for block of adequate size
+    found = False
+    for i, (space_index, space_size) in enumerate(free_space):
+        # Do not try to move the block further to the right
+        if space_index > index:
+            break
 
-                if temp_right - temp_left >= move_block_size:
-                    found = True
-                    break
-                else:
-                    temp_left = temp_right
+        # Found a spot to move the block!
+        if space_size >= size:
+            found = True
+            break
 
-            temp_left += 1
+    # Perform move
+    # No need to resolve fragmentation left behind as it is not searched again
+    if found:
+        blocks[id] = (space_index, size)
+        space_remaining = space_size - size
 
-        # If space, move
-        if found:
-            for i in range(move_block_size):
-                filesystem[temp_left + i] = filesystem[right + i + 1]
-                filesystem[right + i + 1] = -1
+        # Remove free space if size is zero
+        if space_remaining <= 0:
+            free_space.pop(i)
+        # Otherwise modify to correct size
+        else:
+            free_space[i] = (space_index + size, space_remaining)
 
-    else:
-        right -= 1
-
+# Calculate total
 check_sum = 0
-for i, id in enumerate(filesystem):
-    if id == -1:
-        continue
-    check_sum += id * i
+for id, (index, size) in blocks.items():
+    for i in range(size):
+        check_sum += id * (index + i)
 
 print(f"Solution:\n{check_sum}")

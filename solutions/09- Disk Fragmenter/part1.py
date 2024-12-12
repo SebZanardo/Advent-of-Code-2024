@@ -4,6 +4,7 @@ import sys
 # Try to read a path to an input file from command line arguments
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
 
+# Create an array to simulate filesystem memory. -1 empty >= 0 block
 filesystem = []
 with open(path, "r") as f:
     files = list(map(int, list(f.readline().strip())))
@@ -18,6 +19,9 @@ with open(path, "r") as f:
             filesystem += [-1] * free_space
             is_block = True
 
+# Two pointers solution
+# left pointer to find free memory
+# right pointer to find blocks to move
 left = 0
 right = len(filesystem) - 1
 while left < right:
@@ -30,11 +34,14 @@ while left < right:
         if right <= left:
             break
 
+        # Move file id at right pointer to location at left pointer
+        # Set right pointer to empty
         filesystem[left] = filesystem[right]
         filesystem[right] = -1
 
     left += 1
 
+# Calculate total
 check_sum = 0
 for i, id in enumerate(filesystem):
     if id == -1:
