@@ -1,20 +1,21 @@
 import sys
 
 
+# Character constants
+GUARD = '^'
+EMPTY = '.'
+WALL = '#'
+
+# Order is important for turning 90 degrees clockwise (x, y) offset
+DIRECTIONS = ((0, -1), (1, 0), (0, 1), (-1, 0))
+
+
 def inside_map(x, y, max_x, max_y) -> bool:
     return x >= 0 and x < max_x and y >= 0 and y < max_y
 
 
 # Try to read a path to an input file from command line arguments
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
-
-# Character constants
-GUARD = '^'
-EMPTY = '.'
-WALL = '#'
-
-# Order is important
-DIRECTIONS = ((0, -1), (1, 0), (0, 1), (-1, 0))
 
 
 # Parse the input into a 2D array of characters and find start position
@@ -33,18 +34,17 @@ with open(path, "r") as f:
             row.append(char)
         map.append(row)
 
-
+# Find bounds of map
 width = len(map[0])
 height = len(map)
 
+# Simulate, keeping track of distinct squares that are visited in a set
 x = start_x
 y = start_y
 dir = 0  # Up
 
 visited = set()
 visited.add((x, y))
-
-# Simulate
 while True:
     new_x = x + DIRECTIONS[dir][0]
     new_y = y + DIRECTIONS[dir][1]
@@ -64,6 +64,4 @@ while True:
     # Mark current square as seen
     visited.add((x, y))
 
-distinct = len(visited)
-
-print(f"Solution:\n{distinct}")
+print(f"Solution:\n{len(visited)}")
