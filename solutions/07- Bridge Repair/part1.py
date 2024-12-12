@@ -1,10 +1,9 @@
 import sys
-from queue import deque
 
 
 def possible(result: int, values: list[int]) -> bool:
     # Iterative backtracking algorithm
-    stack = deque()
+    stack = []
     stack.append((values[0], '+', 1))
     stack.append((values[0], '*', 1))
 
