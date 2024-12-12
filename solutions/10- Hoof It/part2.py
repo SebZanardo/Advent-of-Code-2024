@@ -1,5 +1,4 @@
 import sys
-from queue import deque
 
 
 DIRECTIONS = ((1, 0), (0, 1), (-1, 0), (0, -1))
@@ -31,7 +30,7 @@ height = len(map_heights)
 total_branches = 0
 for start in start_positions:
     branches = 0
-    open = deque()
+    open = []
     open.append(start)
 
     while open:
