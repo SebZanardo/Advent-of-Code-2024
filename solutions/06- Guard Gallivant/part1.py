@@ -1,19 +1,6 @@
 import sys
 
 
-# For debugging a parsing issue I had
-# def print_map(map: list[list[str]], visited: set[tuple[int, int]]) -> None:
-#     for y in range(len(map)):
-#         print(f"{y}\t", end="")
-#         for x in range(len(map[0])):
-#             if (x, y) in visited:
-#                 print("*", end="")
-#             else:
-#                 print(map[y][x], end="")
-#         print()
-#     print()
-
-
 def inside_map(x, y, max_x, max_y) -> bool:
     return x >= 0 and x < max_x and y >= 0 and y < max_y
 
