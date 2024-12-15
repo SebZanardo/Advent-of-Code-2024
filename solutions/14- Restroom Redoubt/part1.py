@@ -9,6 +9,7 @@ SECONDS = 100
 # Try to read a path to an input file from command line arguments
 path = sys.argv[1] if len(sys.argv) > 1 else "input.in"
 
+# Parse robots into an array as (x, y, vx, vy)
 robots = []
 with open(path, "r") as f:
     for line in f.readlines():
@@ -19,7 +20,6 @@ with open(path, "r") as f:
 
         robots.append((px, py, vx, vy))
 
-# Simulate
 q1 = 0
 q2 = 0
 q3 = 0
@@ -27,12 +27,14 @@ q4 = 0
 for robot in robots:
     px, py, vx, vy = robot
 
+    # Simulate
     for _ in range(SECONDS):
         px += vx
         px %= WIDTH
         py += vy
         py %= HEIGHT
 
+    # Calculate which quadrant the robot is in and increment counter
     if px == WIDTH // 2:
         continue
 
