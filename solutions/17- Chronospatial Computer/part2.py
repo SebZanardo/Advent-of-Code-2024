@@ -2,6 +2,7 @@ import sys
 
 
 print("This brute force solution is so slow it is not even worth running")
+print("I was unable to produce an answer using this solution")
 
 
 def simulate(A: int, B: int, C: int, program: list[int]) -> list[int]:
